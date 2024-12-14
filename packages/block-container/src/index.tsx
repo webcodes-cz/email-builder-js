@@ -18,9 +18,7 @@ const PADDING_SCHEMA = z
   .nullable();
 
 const getPadding = (padding: z.infer<typeof PADDING_SCHEMA>) =>
-  padding
-    ? `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`
-    : undefined;
+  padding ? `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px` : undefined;
 
 export const ContainerPropsSchema = z.object({
   style: z
@@ -37,8 +35,7 @@ export const ContainerPropsSchema = z.object({
 export type ContainerProps = {
   style?: z.infer<typeof ContainerPropsSchema>['style'];
   children?: JSX.Element | JSX.Element[] | null;
-} & React.HTMLAttributes<HTMLDivElement>; 
-// Added `React.HTMLAttributes<HTMLDivElement>` to allow passing arbitrary attributes like data-*
+};
 
 function getBorder(style: ContainerProps['style']) {
   if (!style || !style.borderColor) {
@@ -47,17 +44,15 @@ function getBorder(style: ContainerProps['style']) {
   return `1px solid ${style.borderColor}`;
 }
 
-export function Container({ style, children, ...rest }: ContainerProps) {
+export function Container({ style, children }: ContainerProps) {
   const wStyle: CSSProperties = {
     backgroundColor: style?.backgroundColor ?? undefined,
     border: getBorder(style),
     borderRadius: style?.borderRadius ?? undefined,
     padding: getPadding(style?.padding),
   };
-
-  return (
-    <div style={wStyle} {...rest}>
-      {children}
-    </div>
-  );
+  if (!children) {
+    return <div style={wStyle} />;
+  }
+  return <div style={wStyle}>{children}</div>;
 }
